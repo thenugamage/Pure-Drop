@@ -56,7 +56,7 @@ class LandingPage extends StatelessWidget {
                   style: GoogleFonts.poppins(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.greenAccent,
+                    color: Colors.red,
                   ),
                 ),
                 const SizedBox(height: 10),
