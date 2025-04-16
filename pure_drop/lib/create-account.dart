@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'verificationCompleted.dart';
 
 class CreateAccountPage extends StatelessWidget {
   const CreateAccountPage({super.key});
@@ -108,7 +109,7 @@ class CreateAccountPage extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text("+94", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                          const Text("+94", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.blue)),
                         ],
                       ),
                     ),
@@ -207,7 +208,10 @@ class CreateAccountPage extends StatelessWidget {
                     ),
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const VerificationCompletePage()),
+                        );
                       },
                       child: Text(
                         "Log in",
