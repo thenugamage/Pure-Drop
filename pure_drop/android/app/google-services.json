@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "61528015641",
+    "project_id": "pure-drop-be0d4",
+    "storage_bucket": "pure-drop-be0d4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:61528015641:android:e6d9c69a04d30e953dfb88",
+        "android_client_info": {
+          "package_name": "com.example.pure_drop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBjaMTmxMnd6JSeltBQyeeHEZ4M2HTUXEc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
