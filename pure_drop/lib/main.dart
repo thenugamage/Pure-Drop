@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'login.dart'; 
-import 'create-account.dart';
+import 'pages/login.dart'; 
+import 'pages/create-account.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
