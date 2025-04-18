@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-import 'create-account.dart';
+import 'package:firebase_auth/firebase_auth.dart'; 
+import 'create_account.dart';
 import 'home.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  LoginPageState createState() => LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance; // Firebase Auth instance
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void dispose() {

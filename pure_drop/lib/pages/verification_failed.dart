@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'create_account.dart';
 
 class LoginFailedPage extends StatelessWidget {
   const LoginFailedPage({super.key});
@@ -38,19 +39,20 @@ class LoginFailedPage extends StatelessWidget {
               child: Column(
                 children: [
                   // Back Button
-                    Padding(
+                  Padding(
                     padding: const EdgeInsets.only(top: 5.0),
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
-                      icon: const Icon(Icons.arrow_back_ios, size: 26, color: Colors.white),
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
+                        icon: const Icon(Icons.arrow_back_ios,
+                            size: 26, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
                       ),
                     ),
-                    ),
-                  const SizedBox(height:180),
+                  ),
+                  const SizedBox(height: 180),
                   // Sad Face Icon
                   Image.asset(
                     'assets/sad.png',
@@ -59,7 +61,7 @@ class LoginFailedPage extends StatelessWidget {
                   const SizedBox(height: 30),
                   // Login Failed Title
                   Text(
-                    'Login Failed',
+                    'Email Verification Failed',
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class LoginFailedPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'sorry , this otp is incorrect',
+                    'Sorry, we could not verify your email address.  Please try again.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 16,
@@ -80,7 +82,11 @@ class LoginFailedPage extends StatelessWidget {
                   // Resend OTP Button
                   ElevatedButton(
                     onPressed: () {
-                      // TODO: Trigger resend OTP logic
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const CreateAccountPage()),
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,
@@ -91,7 +97,7 @@ class LoginFailedPage extends StatelessWidget {
                       minimumSize: const Size(double.infinity, 50),
                     ),
                     child: Text(
-                      "Resend OTP",
+                      "Resend Verification Email",
                       style: GoogleFonts.poppins(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,

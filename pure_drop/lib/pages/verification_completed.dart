@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'home.dart';
+import 'login.dart';
+import 'verification_failed.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class VerificationCompletePage extends StatelessWidget {
-  const VerificationCompletePage({super.key});
+  final String email;
+  const VerificationCompletePage({super.key, required this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -44,14 +48,19 @@ class VerificationCompletePage extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.topLeft,
                       child: IconButton(
-                        icon: const Icon(Icons.arrow_back_ios, size: 26, color: Colors.white),
+                        icon: const Icon(Icons.arrow_back_ios,
+                            size: 26, color: Colors.white),
                         onPressed: () {
-                          Navigator.pop(context);
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginPage()),
+                          );
                         },
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 140),
                   // Completed Badge
                   Image.asset(
@@ -61,7 +70,7 @@ class VerificationCompletePage extends StatelessWidget {
                   const SizedBox(height: 10),
                   // You are Verified Text
                   Text(
-                    'You are Verified',
+                    'Email Verified',
                     style: GoogleFonts.poppins(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
@@ -70,7 +79,7 @@ class VerificationCompletePage extends StatelessWidget {
                   ),
                   const SizedBox(height: 15),
                   Text(
-                    'Congratulations to you. You are now Verified!\nKindly proceed to log in',
+                    'Congratulations! Your email has been verified.  Please proceed to log in.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.poppins(
                       fontSize: 14,
@@ -81,11 +90,26 @@ class VerificationCompletePage extends StatelessWidget {
                   const SizedBox(height: 30),
                   // Continue Button
                   ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const HomePage()),
-                        );
+                    onPressed: () async {
+                      // Get the user
+                      final User? user = FirebaseAuth.instance.currentUser;
+                      if (user != null) {
+                        if (user.emailVerified) {
+                          // Email is verified, navigate to home.
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const HomePage()),
+                          );
+                        } else {
+                          // Email is not verified, show error
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const LoginFailedPage()),
+                          );
+                        }
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blue,

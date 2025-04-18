@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:google_sign_in/google_sign_in.dart'; // Import Google Sign-In
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
-import 'create-account.dart';
-import 'home.dart'; // Import HomePage
+import 'create_account.dart';
+import 'home.dart'; 
 
 class LandingPage extends StatelessWidget {
-  const LandingPage({Key? key}) : super(key: key); // Added Key?
+  const LandingPage({super.key}); // Converted to super parameter
 
   Future<void> _signInWithGoogle(BuildContext context) async {
     try {
