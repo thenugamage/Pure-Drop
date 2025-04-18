@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'verificationCompleted.dart';
+import 'verificationFailed.dart';
+import 'login.dart';
 
 class CreateAccountPage extends StatelessWidget {
   const CreateAccountPage({super.key});
@@ -160,43 +162,6 @@ class CreateAccountPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                // OR Text
-                Text(
-                  "- OR Continue with -",
-                  style: GoogleFonts.poppins(
-                    fontSize: 14,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 15),
-                // Google Sign-In Button
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset('assets/google.png', height: 24),
-                      const SizedBox(width: 10),
-                      Text(
-                        "Google",
-                        style: GoogleFonts.poppins(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
                 const SizedBox(height: 30),
                 // Already Have an Account? Login
                 Row(
@@ -210,7 +175,7 @@ class CreateAccountPage extends StatelessWidget {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const VerificationCompletePage()),
+                          MaterialPageRoute(builder: (context) => const LoginPage()),
                         );
                       },
                       child: Text(
@@ -218,7 +183,7 @@ class CreateAccountPage extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue,
+                          color: const Color.fromARGB(255, 0, 107, 194),
                         ),
                       ),
                     ),
