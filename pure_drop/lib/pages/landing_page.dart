@@ -4,7 +4,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'login.dart';
 import 'create_account.dart';
-import 'home.dart'; 
+import 'home_page.dart'; 
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key}); // Converted to super parameter

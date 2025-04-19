@@ -1,13 +1,20 @@
+// navigationbar.dart
 import 'package:flutter/material.dart';
+import '../pages/home_page.dart';
+import '../pages/report_page.dart';
+import '../pages/settings_page.dart';
+import '../pages/profile_page.dart';
 
 class CustomBottomNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final GlobalKey<NavigatorState> navigatorKey;
 
   const CustomBottomNavBar({
     super.key,
     required this.currentIndex,
     required this.onTap,
+    required this.navigatorKey,
   });
 
   @override
@@ -21,21 +28,24 @@ class CustomBottomNavBar extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            _navItem(icon: Icons.home, label: 'Home', index: 0),
-            _navItem(icon: Icons.bar_chart, label: 'Analysis', index: 1),
+            _navItem(context, icon: Icons.home, label: 'Home', index: 0),
+            _navItem(context, icon: Icons.bar_chart, label: 'Analysis', index: 1),
             const SizedBox(width: 40), // FAB space
-            _navItem(icon: Icons.settings, label: 'Setting', index: 2),
-            _navItem(icon: Icons.person_outline, label: 'Profile', index: 3),
+            _navItem(context, icon: Icons.settings, label: 'Setting', index: 3),
+            _navItem(context, icon: Icons.person_outline, label: 'Profile', index: 4),
           ],
         ),
       ),
     );
   }
 
-  Widget _navItem({required IconData icon, required String label, required int index}) {
+  Widget _navItem(BuildContext context, {required IconData icon, required String label, required int index}) {
     final isSelected = currentIndex == index;
     return GestureDetector(
-      onTap: () => onTap(index),
+      onTap: () {
+        onTap(index);
+        _handleNavigation(context, index);
+      },
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -56,5 +66,34 @@ class CustomBottomNavBar extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void _handleNavigation(BuildContext context, int index) {
+    switch (index) {
+      case 0: // Home
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        break;
+      case 1: // Analysis
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ReportPage()),
+        );
+        break;
+      case 3: // Setting
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingPage()),
+        );
+        break;
+      case 4: // Profile
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+        break;
+    }
   }
 }

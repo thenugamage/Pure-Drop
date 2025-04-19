@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home.dart';
+import 'home_page.dart';
 import 'login.dart';
 import 'verification_failed.dart';
 import 'package:firebase_auth/firebase_auth.dart';

@@ -1,9 +1,13 @@
+// report_page.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../widgets/navigationbar.dart';
+import 'home_page.dart';
+import 'settings_page.dart';
+import 'profile_page.dart';
 
 class ReportPage extends StatefulWidget {
-  const ReportPage({super.key});
+  const ReportPage({Key? key}) : super(key: key);
 
   @override
   State<ReportPage> createState() => _ReportPageState();
@@ -11,25 +15,68 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   int _currentIndex = 1;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
-    // Navigation logic here
+
+    if (index == 2) {
+      // Refresh button tapped
+      _refreshReportPage();
+    } else {
+      _navigateToPage(index);
+    }
+  }
+
+  void _refreshReportPage() {
+    setState(() {
+      // Refresh the data or UI as needed
+    });
+  }
+
+  void _navigateToPage(int index) {
+    switch (index) {
+      case 0: // Home
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
+        break;
+      case 1: // Analysis
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ReportPage()),
+        );
+        break;
+      case 3: // Setting
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SettingPage()),
+        );
+        break;
+      case 4: // Profile
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => ProfilePage()),
+        );
+        break;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => _onItemTapped(2),
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
         child: const Icon(Icons.sync, color: Colors.black, size: 28),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CustomBottomNavBar(
+        navigatorKey: _navigatorKey,
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
       ),
