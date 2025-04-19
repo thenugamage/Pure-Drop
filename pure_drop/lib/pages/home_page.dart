@@ -1,10 +1,8 @@
-// home_page.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../widgets/navigationbar.dart';
-import 'report_page.dart';
-import 'settings_page.dart';
-import 'profile_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,55 +13,47 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref(
+    'waterQuality',
+  );
+
+  double? ph, temperature, turbidity;
+  String clearness = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _listenToWaterQualityUpdates();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
-
-    if (index == 2) {
-      // Refresh button tapped
-      _refreshHomePage();
-    } else {
-      _navigateToPage(index);
-    }
   }
 
-  void _refreshHomePage() {
-    setState(() {
-      // This will rebuild the HomePage. In a real app, you might want to
-      // re-fetch data or reset some state here.
+  void _listenToWaterQualityUpdates() {
+    _dbRef.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
+      setState(() {
+        ph = (data['pH'] as num?)?.toDouble() ?? 0.0;
+        temperature = (data['temperature'] as num?)?.toDouble() ?? 0.0;
+        turbidity = (data['turbidity'] as num?)?.toDouble() ?? 0.0;
+        clearness = data['clearness'] ?? "Unknown";
+      });
+
+      _storeToFirestore();
     });
   }
 
-  void _navigateToPage(int index) {
-    switch (index) {
-      case 0: // Home
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
-        break;
-      case 1: // Analysis
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ReportPage()),
-        );
-        break;
-      case 3: // Setting
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => SettingPage()),
-        );
-        break;
-      case 4: // Profile
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
-        );
-        break;
-    }
+  void _storeToFirestore() async {
+    await FirebaseFirestore.instance.collection('water_logs').add({
+      'timestamp': Timestamp.now(),
+      'pH': ph,
+      'temperature': temperature,
+      'turbidity': turbidity,
+      'clearness': clearness,
+    });
   }
 
   @override
@@ -77,7 +67,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: CustomBottomNavBar(
-        navigatorKey: _navigatorKey,
+        navigatorKey: GlobalKey<NavigatorState>(),
         currentIndex: _currentIndex,
         onTap: _onItemTapped,
       ),
@@ -100,135 +90,226 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SafeArea(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                children: [
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Icon(Icons.info_outline, color: Colors.indigo[900]),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildMetricCard(
-                          title: "pH Level",
-                          value: "7.20",
-                          subtitle: "Range:6.5–8.5",
-                          icon: Icons.water_drop,
-                          status: "Normal",
-                          statusColor: Colors.green,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildMetricCard(
-                          title: "Temperature",
-                          value: "23.50 C",
-                          subtitle: "74.30 F",
-                          icon: Icons.thermostat,
-                          status: "Normal",
-                          statusColor: Colors.green,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildMetricCard(
-                          title: "Turbidity",
-                          value: "5.80 NTU",
-                          subtitle: "Threshold: 5.0 NTU",
-                          icon: Icons.blur_on,
-                          status: "Warning",
-                          statusColor: Colors.orange,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _buildMetricCard(
-                          title: "Quality Type",
-                          value: "",
-                          subtitle: "",
-                          icon: null,
-                          status: "Normal",
-                          statusColor: Colors.green,
-                          showValue: false,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: const Color.fromRGBO(255, 248, 225, 1),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.amber, width: 1),
-                    ),
-                    child: Row(
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 40, left: 16, right: 16),
+                child: Align(
+                  alignment: Alignment.topRight,
+                  child: Icon(Icons.mail_outline, color: Colors.indigo[900]),
+                ),
+              ),
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Column(
+                  children: [
+                    Row(
                       children: [
-                        const Icon(Icons.warning_amber_rounded,
-                            color: Colors.amber),
-                        const SizedBox(width: 8),
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Water Quality Alert",
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                              Text(
-                                "Turbidity levels are above normal theshold. Consider maintenance check.",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 12,
-                                  color: Colors.black87,
-                                ),
-                              ),
-                            ],
+                          child: _buildMetricCard(
+                            title: "pH Level",
+                            value: ph?.toStringAsFixed(2) ?? '--',
+                            subtitle: "Range: 6.5 - 8.5",
+                            icon: Icons.water_drop,
+                            status: _getPhStatus(),
+                            statusColor: _getPhStatusColor(),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildMetricCard(
+                            title: "Temperature",
+                            value:
+                                "${temperature?.toStringAsFixed(2) ?? '--'} °C",
+                            subtitle: "Celsius",
+                            icon: Icons.thermostat,
+                            status: "Normal",
+                            statusColor: Colors.green,
                           ),
                         ),
                       ],
                     ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildMetricCard(
+                            title: "Turbidity",
+                            value:
+                                "${turbidity?.toStringAsFixed(2) ?? '--'} NTU",
+                            subtitle: "Threshold: 5.0 NTU",
+                            icon: Icons.opacity,
+                            status: _getTurbidityStatus(),
+                            statusColor: _getTurbidityStatusColor(),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: _buildMetricCard(
+                            title: "Quality Type",
+                            value: clearness,
+                            subtitle: "",
+                            icon: null,
+                            status: clearness,
+                            statusColor:
+                                clearness == "CLEAN WATER"
+                                    ? Colors.green
+                                    : Colors.red,
+                            showValue: false,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color.fromRGBO(255, 248, 225, 1),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.amber, width: 1),
                   ),
-                  const SizedBox(height: 30),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.settings, color: Colors.blue),
-                      label: Text(
-                        "Configure",
-                        style: GoogleFonts.poppins(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.w600,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Icon(
+                        Icons.warning_amber_rounded,
+                        color: Colors.amber,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Water Quality Alert",
+                              style: GoogleFonts.poppins(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              _getAlertMessage(),
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                color: Colors.black87,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                    ],
+                  ),
+                ),
+              ),
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 20,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          _listenToWaterQualityUpdates(); // Refresh manually
+                        },
+                        icon: const Icon(Icons.refresh, color: Colors.blue),
+                        label: Text(
+                          "Refresh Data",
+                          style: GoogleFonts.poppins(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          // Open a settings screen here
+                        },
+                        icon: const Icon(Icons.settings, color: Colors.blue),
+                        label: Text(
+                          "Configure",
+                          style: GoogleFonts.poppins(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
+            ],
           ),
         ],
       ),
     );
+  }
+
+  String _getPhStatus() {
+    if (ph == null) return "Unknown";
+    if (ph! < 6.5 || ph! > 8.5) return "Abnormal";
+    return "Normal";
+  }
+
+  Color _getPhStatusColor() {
+    if (ph == null) return Colors.grey;
+    return (ph! < 6.5 || ph! > 8.5) ? Colors.red : Colors.green;
+  }
+
+  String _getTurbidityStatus() {
+    if (turbidity == null) return "Unknown";
+    return turbidity! > 5.0 ? "Warning" : "Normal";
+  }
+
+  Color _getTurbidityStatusColor() {
+    if (turbidity == null) return Colors.grey;
+    return turbidity! > 5.0 ? Colors.orange : Colors.green;
+  }
+
+  String _getAlertMessage() {
+    List<String> issues = [];
+
+    if (turbidity != null && turbidity! > 5.0) {
+      issues.add("• Turbidity is above the safe threshold (5.0 NTU)");
+    }
+    if (ph != null && (ph! < 6.5 || ph! > 8.5)) {
+      issues.add("• pH level is outside the normal range (6.5 - 8.5)");
+    }
+    if (temperature != null && (temperature! < 10 || temperature! > 50)) {
+      issues.add("• Temperature is outside the recommended range (10–50°C)");
+    }
+
+    return issues.isNotEmpty
+        ? issues.join('\n')
+        : "All water quality parameters are within safe limits.";
   }
 
   Widget _buildMetricCard({
@@ -256,9 +337,10 @@ class _HomePageState extends State<HomePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
-              style: GoogleFonts.poppins(
-                  fontSize: 12, color: Colors.black54)),
+          Text(
+            title,
+            style: GoogleFonts.poppins(fontSize: 12, color: Colors.black54),
+          ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
             decoration: BoxDecoration(
@@ -283,24 +365,16 @@ class _HomePageState extends State<HomePage> {
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: statusColor == Colors.orange
-                        ? Colors.red
-                        : Colors.black,
+                    color: Colors.black,
                   ),
                 ),
                 const Spacer(),
-                if (icon != null)
-                  Icon(
-                    icon,
-                    color: Colors.black,
-                    size: 24,
-                  ),
+                if (icon != null) Icon(icon, color: Colors.blue, size: 24),
               ],
             ),
             Text(
               subtitle,
-              style:
-                  GoogleFonts.poppins(fontSize: 10, color: Colors.black54),
+              style: GoogleFonts.poppins(fontSize: 10, color: Colors.black54),
             ),
           ] else
             const SizedBox(height: 24),
