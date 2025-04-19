@@ -1,10 +1,13 @@
-// report_page.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import '../widgets/navigationbar.dart';
+import 'average.dart';
 import 'home_page.dart';
+import 'monthly.dart';
 import 'settings_page.dart';
 import 'profile_page.dart';
+import 'weekly.dart';
 
 class ReportPage extends StatefulWidget {
   const ReportPage({Key? key}) : super(key: key);
@@ -17,13 +20,21 @@ class _ReportPageState extends State<ReportPage> {
   int _currentIndex = 1;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  DateTime selectedDate = DateTime.now();
+  late DateTime weekStart;
+
+  @override
+  void initState() {
+    super.initState();
+    weekStart = selectedDate.subtract(Duration(days: selectedDate.weekday % 7));
+  }
+
   void _onItemTapped(int index) {
     setState(() {
       _currentIndex = index;
     });
 
     if (index == 2) {
-      // Refresh button tapped
       _refreshReportPage();
     } else {
       _navigateToPage(index);
@@ -31,32 +42,30 @@ class _ReportPageState extends State<ReportPage> {
   }
 
   void _refreshReportPage() {
-    setState(() {
-      // Refresh the data or UI as needed
-    });
+    setState(() {});
   }
 
   void _navigateToPage(int index) {
     switch (index) {
-      case 0: // Home
+      case 0:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomePage()),
         );
         break;
-      case 1: // Analysis
+      case 1:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ReportPage()),
         );
         break;
-      case 3: // Setting
+      case 3:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => SettingPage()),
         );
         break;
-      case 4: // Profile
+      case 4:
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => ProfilePage()),
@@ -65,8 +74,22 @@ class _ReportPageState extends State<ReportPage> {
     }
   }
 
+  void _previousWeek() {
+    setState(() {
+      weekStart = weekStart.subtract(const Duration(days: 7));
+    });
+  }
+
+  void _nextWeek() {
+    setState(() {
+      weekStart = weekStart.add(const Duration(days: 7));
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => _onItemTapped(2),
@@ -148,8 +171,11 @@ class _ReportPageState extends State<ReportPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _tabItem(icon: Icons.history, label: 'History', selected: true),
-                    _tabItem(icon: Icons.settings, label: 'Setting'),
+                    _tabItem(
+                      icon: Icons.history,
+                      label: 'History',
+                      selected: true,
+                    ),
                   ],
                 ),
 
@@ -167,7 +193,7 @@ class _ReportPageState extends State<ReportPage> {
                       Row(
                         children: [
                           Text(
-                            "This Week",
+                            DateFormat('MMMM yyyy').format(weekStart),
                             style: GoogleFonts.poppins(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -192,38 +218,69 @@ class _ReportPageState extends State<ReportPage> {
                       ),
                       const SizedBox(height: 10),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: List.generate(7, (index) {
-                          final days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-                          final dates = [10, 11, 12, 13, 14, 15, 16];
-                          final today = 11;
-                          return Column(
-                            children: [
-                              Text(
-                                days[index],
-                                style: const TextStyle(color: Colors.white, fontSize: 12),
-                              ),
-                              const SizedBox(height: 6),
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: dates[index] == today
-                                      ? Colors.pink.shade100
-                                      : Colors.transparent,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.chevron_left,
+                              color: Colors.white,
+                            ),
+                            onPressed: _previousWeek,
+                          ),
+                          ...List.generate(7, (index) {
+                            DateTime day = weekStart.add(Duration(days: index));
+                            bool isSelected = DateUtils.isSameDay(
+                              day,
+                              selectedDate,
+                            );
+                            return Expanded(
+                              child: GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    selectedDate = day;
+                                  });
+                                },
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      days[index],
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color:
+                                            isSelected
+                                                ? Colors.pink.shade100
+                                                : Colors.transparent,
+                                      ),
+                                      padding: const EdgeInsets.all(8),
+                                      child: Text(
+                                        "${day.day}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                padding: const EdgeInsets.all(8),
-                                child: Text(
-                                  "${dates[index]}",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                ),
                               ),
-                            ],
-                          );
-                        }),
+                            );
+                          }),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.chevron_right,
+                              color: Colors.white,
+                            ),
+                            onPressed: _nextWeek,
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -240,10 +297,43 @@ class _ReportPageState extends State<ReportPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Report Rows
-                _reportRow("Weekly Report", Colors.green),
-                _reportRow("Monthly Report", Colors.blue),
-                _reportRow("Average Report", Colors.orange),
+                // Animated Report Buttons with Navigation
+                _animatedReportButton(
+                  title: "Weekly Report",
+                  dotColor: Colors.green,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const WeeklyReportPage(),
+                      ),
+                    );
+                  },
+                ),
+                _animatedReportButton(
+                  title: "Monthly Report",
+                  dotColor: Colors.blue,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MonthlyReportPage(),
+                      ),
+                    );
+                  },
+                ),
+                _animatedReportButton(
+                  title: "Average Report",
+                  dotColor: Colors.orange,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const AverageReportPage(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),
@@ -252,17 +342,18 @@ class _ReportPageState extends State<ReportPage> {
     );
   }
 
-  Widget _tabItem({required IconData icon, required String label, bool selected = false}) {
+  Widget _tabItem({
+    required IconData icon,
+    required String label,
+    bool selected = false,
+  }) {
     return Column(
       children: [
         Icon(icon, color: Colors.white),
         const SizedBox(height: 4),
         Text(
           label,
-          style: GoogleFonts.poppins(
-            color: Colors.white,
-            fontSize: 12,
-          ),
+          style: GoogleFonts.poppins(color: Colors.white, fontSize: 12),
         ),
         const SizedBox(height: 4),
         if (selected)
@@ -273,32 +364,49 @@ class _ReportPageState extends State<ReportPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(2),
             ),
-          )
+          ),
       ],
     );
   }
 
-  Widget _reportRow(String title, Color dotColor) {
+  Widget _animatedReportButton({
+    required String title,
+    required Color dotColor,
+    required VoidCallback onTap,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Row(
-          children: [
-            Icon(Icons.circle, color: dotColor, size: 10),
-            const SizedBox(width: 10),
-            Text(
-              title,
-              style: GoogleFonts.poppins(
-                color: Colors.white,
-                fontSize: 14,
-              ),
-            )
-          ],
+      child: InkWell(
+        onTap: onTap,
+        splashColor: Colors.white24,
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedScale(
+          scale: 1.0,
+          duration: const Duration(milliseconds: 150),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.15),
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 6,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.circle, color: dotColor, size: 10),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: GoogleFonts.poppins(color: Colors.white, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

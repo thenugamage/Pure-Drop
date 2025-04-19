@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class AverageReportPage extends StatelessWidget {
-  const AverageReportPage({super.key});
+class WeeklyReportPage extends StatelessWidget {
+  const WeeklyReportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class AverageReportPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Average Report",
+          "Weekly Report",
           style: GoogleFonts.poppins(color: Colors.white),
         ),
         centerTitle: true,
@@ -50,7 +50,7 @@ class AverageReportPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Overall Averages",
+                  "Water Quality Summary",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -59,21 +59,21 @@ class AverageReportPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _dataCard(
-                  "Avg pH (All Time)",
-                  "7.03",
-                  "Ideal Range: 6.5 – 8.5",
+                  "Average pH",
+                  "7.25",
+                  "Ideal Range: 6.5 - 8.5",
                   Icons.water_drop,
                 ),
                 _dataCard(
-                  "Avg Temp",
-                  "26.1 °C",
-                  "Recorded across all months",
+                  "Average Temperature",
+                  "26.7 °C",
+                  "Ideal Range: 10 - 50 °C",
                   Icons.thermostat,
                 ),
                 _dataCard(
-                  "Avg Turbidity",
-                  "3.9 NTU",
-                  "Safe when < 5.0 NTU",
+                  "Average Turbidity",
+                  "4.1 NTU",
+                  "Safe < 5.0 NTU",
                   Icons.opacity,
                 ),
 
@@ -83,7 +83,7 @@ class AverageReportPage extends StatelessWidget {
                 const Spacer(),
                 Center(
                   child: Text(
-                    "Based on historical water data.",
+                    "Data collected from daily sync.",
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: Colors.white70,
@@ -213,11 +213,11 @@ class AverageReportPage extends StatelessWidget {
                     color: Colors.black,
                     dotData: FlDotData(show: false),
                     spots: [
-                      FlSpot(1, 60),
-                      FlSpot(3, 100),
-                      FlSpot(5, 80),
-                      FlSpot(7, 140),
-                      FlSpot(9, 60),
+                      FlSpot(6, 60),
+                      FlSpot(7, 120),
+                      FlSpot(8, 30),
+                      FlSpot(9, 180),
+                      FlSpot(10, 0),
                       FlSpot(11, 180),
                     ],
                   ),

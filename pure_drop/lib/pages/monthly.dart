@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class AverageReportPage extends StatelessWidget {
-  const AverageReportPage({super.key});
+class MonthlyReportPage extends StatelessWidget {
+  const MonthlyReportPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class AverageReportPage extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Average Report",
+          "Monthly Report",
           style: GoogleFonts.poppins(color: Colors.white),
         ),
         centerTitle: true,
@@ -50,7 +50,7 @@ class AverageReportPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Overall Averages",
+                  "Water Quality Overview",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -59,31 +59,29 @@ class AverageReportPage extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 _dataCard(
-                  "Avg pH (All Time)",
-                  "7.03",
-                  "Ideal Range: 6.5 – 8.5",
+                  "Avg pH Level",
+                  "7.10",
+                  "Safe Range: 6.5 - 8.5",
                   Icons.water_drop,
                 ),
                 _dataCard(
-                  "Avg Temp",
-                  "26.1 °C",
-                  "Recorded across all months",
+                  "Avg Temperature",
+                  "27.4 °C",
+                  "Normal range: 10 - 50 °C",
                   Icons.thermostat,
                 ),
                 _dataCard(
                   "Avg Turbidity",
-                  "3.9 NTU",
-                  "Safe when < 5.0 NTU",
+                  "3.5 NTU",
+                  "Safe below 5.0 NTU",
                   Icons.opacity,
                 ),
-
                 const SizedBox(height: 24),
                 _buildAnalysisChart(),
-
                 const Spacer(),
                 Center(
                   child: Text(
-                    "Based on historical water data.",
+                    "Data generated from daily water logs.",
                     style: GoogleFonts.poppins(
                       fontSize: 12,
                       color: Colors.white70,
@@ -185,18 +183,30 @@ class AverageReportPage extends StatelessWidget {
                   bottomTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
-                      interval: 1,
+                      interval: 5,
                       getTitlesWidget: (value, meta) {
-                        return Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Text(
-                            "${value.toInt()}",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 12,
+                        if ([
+                          1,
+                          5,
+                          10,
+                          15,
+                          20,
+                          25,
+                          30,
+                        ].contains(value.toInt())) {
+                          return Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: Text(
+                              "${value.toInt()}",
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11,
+                              ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
                       },
                     ),
                   ),
@@ -214,11 +224,12 @@ class AverageReportPage extends StatelessWidget {
                     dotData: FlDotData(show: false),
                     spots: [
                       FlSpot(1, 60),
-                      FlSpot(3, 100),
-                      FlSpot(5, 80),
-                      FlSpot(7, 140),
-                      FlSpot(9, 60),
-                      FlSpot(11, 180),
+                      FlSpot(5, 120),
+                      FlSpot(10, 30),
+                      FlSpot(15, 180),
+                      FlSpot(20, 0),
+                      FlSpot(25, 180),
+                      FlSpot(30, 120),
                     ],
                   ),
                 ],

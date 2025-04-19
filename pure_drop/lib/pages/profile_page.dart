@@ -7,7 +7,7 @@ import 'report_page.dart';
 import 'settings_page.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({Key? key}) : super(key: key);
+  const ProfilePage({super.key});
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -65,14 +65,18 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  final TextEditingController _firstNameController =
-      TextEditingController(text: "Aashifa");
-  final TextEditingController _lastNameController =
-      TextEditingController(text: "Sheikh");
-  final TextEditingController _emailController =
-      TextEditingController(text: "aashifasheikh@gmail.com");
-  final TextEditingController _phoneController =
-      TextEditingController(text: "25");
+  final TextEditingController _firstNameController = TextEditingController(
+    text: "Aashifa",
+  );
+  final TextEditingController _lastNameController = TextEditingController(
+    text: "Sheikh",
+  );
+  final TextEditingController _emailController = TextEditingController(
+    text: "aashifasheikh@gmail.com",
+  );
+  final TextEditingController _phoneController = TextEditingController(
+    text: "25",
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -117,8 +121,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       IconButton(
                         onPressed: () => Navigator.of(context).pop(),
-                        icon: const Icon(Icons.arrow_back_ios,
-                            color: Colors.white),
+                        icon: const Icon(
+                          Icons.arrow_back_ios,
+                          color: Colors.white,
+                        ),
                       ),
                     ],
                   ),
@@ -159,8 +165,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         child: CircleAvatar(
                           radius: 18,
                           backgroundColor: Colors.white,
-                          child: Icon(Icons.edit,
-                              color: Colors.blue.shade700, size: 18),
+                          child: Icon(
+                            Icons.edit,
+                            color: Colors.blue.shade700,
+                            size: 18,
+                          ),
                         ),
                       ),
                     ],
@@ -201,8 +210,10 @@ class _ProfilePageState extends State<ProfilePage> {
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 12,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
