@@ -114,7 +114,7 @@ class _SettingPageState extends State<SettingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _onItemTapped(2),
+        onPressed: () => _navigateToPage(0),
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
         child: const Icon(Icons.sync, color: Colors.black, size: 28),

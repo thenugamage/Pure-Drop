@@ -60,7 +60,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () => _onItemTapped(2),
+        onPressed: () {
+          _listenToWaterQualityUpdates(); // Refresh manually
+        },
         shape: const CircleBorder(),
         backgroundColor: Colors.white,
         child: const Icon(Icons.sync, color: Colors.black, size: 28),
@@ -209,7 +211,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              const Spacer(),
               Padding(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 16,
@@ -218,29 +219,6 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          _listenToWaterQualityUpdates(); // Refresh manually
-                        },
-                        icon: const Icon(Icons.refresh, color: Colors.blue),
-                        label: Text(
-                          "Refresh Data",
-                          style: GoogleFonts.poppins(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
                     Expanded(
                       child: ElevatedButton.icon(
                         onPressed: () {
