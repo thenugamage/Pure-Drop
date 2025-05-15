@@ -1,9 +1,62 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AverageReportPage extends StatelessWidget {
+class AverageReportPage extends StatefulWidget {
   const AverageReportPage({super.key});
+
+  @override
+  State<AverageReportPage> createState() => _AverageReportPageState();
+}
+
+class _AverageReportPageState extends State<AverageReportPage> {
+  List<FlSpot> phSpots = [];
+  double avgPh = 0, avgTemp = 0, avgTurbidity = 0;
+  bool isLoading = true;
+  late Stream<QuerySnapshot> _stream;
+
+  @override
+  void initState() {
+    super.initState();
+    _stream = FirebaseFirestore.instance
+        .collection('water_logs')
+        .orderBy('timestamp')
+        .snapshots();
+
+    _stream.listen((snapshot) {
+      final docs = snapshot.docs;
+      if (docs.isEmpty) {
+        setState(() => isLoading = false);
+        return;
+      }
+
+      double phSum = 0, tempSum = 0, turbiditySum = 0;
+      List<FlSpot> tempSpots = [];
+
+      for (int i = 0; i < docs.length; i++) {
+        final data = docs[i].data() as Map<String, dynamic>;
+        double? ph = (data['pH'] as num?)?.toDouble();
+        double? temp = (data['temperature'] as num?)?.toDouble();
+        double? turbidity = (data['turbidity'] as num?)?.toDouble();
+
+        if (ph != null && temp != null && turbidity != null) {
+          phSum += ph;
+          tempSum += temp;
+          turbiditySum += turbidity;
+          tempSpots.add(FlSpot(i.toDouble(), ph));
+        }
+      }
+
+      setState(() {
+        avgPh = phSum / docs.length;
+        avgTemp = tempSum / docs.length;
+        avgTurbidity = turbiditySum / docs.length;
+        phSpots = tempSpots;
+        isLoading = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +99,9 @@ class AverageReportPage extends StatelessWidget {
           ),
           Padding(
             padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
-            child: Column(
+            child: isLoading
+                ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                : Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -58,36 +113,16 @@ class AverageReportPage extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _dataCard(
-                  "Avg pH (All Time)",
-                  "7.03",
-                  "Ideal Range: 6.5 – 8.5",
-                  Icons.water_drop,
-                ),
-                _dataCard(
-                  "Avg Temp",
-                  "26.1 °C",
-                  "Recorded across all months",
-                  Icons.thermostat,
-                ),
-                _dataCard(
-                  "Avg Turbidity",
-                  "3.9 NTU",
-                  "Safe when < 5.0 NTU",
-                  Icons.opacity,
-                ),
-
+                _dataCard("Avg pH (All Time)", avgPh.toStringAsFixed(2), "Ideal Range: 6.5 – 8.5", Icons.water_drop),
+                _dataCard("Avg Temp", "${avgTemp.toStringAsFixed(1)} °C", "Recorded across all months", Icons.thermostat),
+                _dataCard("Avg Turbidity", "${avgTurbidity.toStringAsFixed(1)} NTU", "Safe when < 5.0 NTU", Icons.opacity),
                 const SizedBox(height: 24),
                 _buildAnalysisChart(),
-
                 const Spacer(),
                 Center(
                   child: Text(
                     "Based on historical water data.",
-                    style: GoogleFonts.poppins(
-                      fontSize: 12,
-                      color: Colors.white70,
-                    ),
+                    style: GoogleFonts.poppins(fontSize: 12, color: Colors.white70),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -115,21 +150,9 @@ class AverageReportPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                value,
-                style: GoogleFonts.poppins(color: Colors.white, fontSize: 16),
-              ),
-              Text(
-                subtitle,
-                style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12),
-              ),
+              Text(title, style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+              Text(value, style: GoogleFonts.poppins(color: Colors.white, fontSize: 16)),
+              Text(subtitle, style: GoogleFonts.poppins(color: Colors.white70, fontSize: 12)),
             ],
           ),
         ],
@@ -161,7 +184,7 @@ class AverageReportPage extends StatelessWidget {
                   drawVerticalLine: false,
                   getDrawingHorizontalLine:
                       (value) =>
-                          FlLine(color: Colors.pink.shade100, strokeWidth: 1),
+                      FlLine(color: Colors.pink.shade100, strokeWidth: 1),
                 ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(

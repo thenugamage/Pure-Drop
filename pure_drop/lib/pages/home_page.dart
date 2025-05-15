@@ -123,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                           child: _buildMetricCard(
                             title: "Temperature",
                             value:
-                                "${temperature?.toStringAsFixed(2) ?? '--'} °C",
+                            "${temperature?.toStringAsFixed(2) ?? '--'} °C",
                             subtitle: "Celsius",
                             icon: Icons.thermostat,
                             status: "Normal",
@@ -139,7 +139,7 @@ class _HomePageState extends State<HomePage> {
                           child: _buildMetricCard(
                             title: "Turbidity",
                             value:
-                                "${turbidity?.toStringAsFixed(2) ?? '--'} NTU",
+                            "${turbidity?.toStringAsFixed(2) ?? '--'} NTU",
                             subtitle: "Threshold: 5.0 NTU",
                             icon: Icons.opacity,
                             status: _getTurbidityStatus(),
@@ -155,9 +155,9 @@ class _HomePageState extends State<HomePage> {
                             icon: null,
                             status: clearness,
                             statusColor:
-                                clearness == "CLEAN WATER"
-                                    ? Colors.green
-                                    : Colors.red,
+                            clearness == "CLEAN WATER"
+                                ? Colors.green
+                                : Colors.red,
                             showValue: false,
                           ),
                         ),
@@ -211,39 +211,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 20,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () {
-                          // Open a settings screen here
-                        },
-                        icon: const Icon(Icons.settings, color: Colors.blue),
-                        label: Text(
-                          "Configure",
-                          style: GoogleFonts.poppins(
-                            color: Colors.blue,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
             ],
           ),
         ],

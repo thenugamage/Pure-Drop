@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import '../widgets/navigationbar.dart';
 import 'average.dart';
 import 'home_page.dart';
@@ -19,15 +18,6 @@ class ReportPage extends StatefulWidget {
 class _ReportPageState extends State<ReportPage> {
   int _currentIndex = 1;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-
-  DateTime selectedDate = DateTime.now();
-  late DateTime weekStart;
-
-  @override
-  void initState() {
-    super.initState();
-    weekStart = selectedDate.subtract(Duration(days: selectedDate.weekday % 7));
-  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -50,46 +40,32 @@ class _ReportPageState extends State<ReportPage> {
       case 0:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomePage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
         break;
       case 1:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ReportPage()),
+          MaterialPageRoute(builder: (context) => const ReportPage()),
         );
         break;
       case 3:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => SettingPage()),
+          MaterialPageRoute(builder: (context) => const SettingPage()),
         );
         break;
       case 4:
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => ProfilePage()),
+          MaterialPageRoute(builder: (context) => const ProfilePage()),
         );
         break;
     }
   }
 
-  void _previousWeek() {
-    setState(() {
-      weekStart = weekStart.subtract(const Duration(days: 7));
-    });
-  }
-
-  void _nextWeek() {
-    setState(() {
-      weekStart = weekStart.add(const Duration(days: 7));
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    final days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () => _navigateToPage(0),
@@ -130,11 +106,19 @@ class _ReportPageState extends State<ReportPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Connected Row
+                // Connected Row with working back button
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(Icons.arrow_back, color: Colors.white),
+                    IconButton(
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => const HomePage()),
+                        );
+                      },
+                    ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
@@ -179,113 +163,6 @@ class _ReportPageState extends State<ReportPage> {
                   ],
                 ),
 
-                // Calendar Card
-                const SizedBox(height: 20),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            DateFormat('MMMM yyyy').format(weekStart),
-                            style: GoogleFonts.poppins(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: Colors.white,
-                            ),
-                          ),
-                          const Spacer(),
-                          Row(
-                            children: const [
-                              Text(
-                                "History",
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              SizedBox(width: 4),
-                              Icon(Icons.chevron_right, color: Colors.white),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          IconButton(
-                            icon: const Icon(
-                              Icons.chevron_left,
-                              color: Colors.white,
-                            ),
-                            onPressed: _previousWeek,
-                          ),
-                          ...List.generate(7, (index) {
-                            DateTime day = weekStart.add(Duration(days: index));
-                            bool isSelected = DateUtils.isSameDay(
-                              day,
-                              selectedDate,
-                            );
-                            return Expanded(
-                              child: GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    selectedDate = day;
-                                  });
-                                },
-                                child: Column(
-                                  children: [
-                                    Text(
-                                      days[index],
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color:
-                                            isSelected
-                                                ? Colors.pink.shade100
-                                                : Colors.transparent,
-                                      ),
-                                      padding: const EdgeInsets.all(8),
-                                      child: Text(
-                                        "${day.day}",
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }),
-                          IconButton(
-                            icon: const Icon(
-                              Icons.chevron_right,
-                              color: Colors.white,
-                            ),
-                            onPressed: _nextWeek,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
                 const SizedBox(height: 30),
                 Text(
                   "Drink Water Report",
@@ -297,7 +174,6 @@ class _ReportPageState extends State<ReportPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Animated Report Buttons with Navigation
                 _animatedReportButton(
                   title: "Weekly Report",
                   dotColor: Colors.green,
